@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function StatsCards() {
 
@@ -49,7 +50,7 @@ export default function StatsCards() {
   }, []);
   const getProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/products")
+      const res = await axios.get(`${BASE_URL}/products`)
       setTotalProd(res.data.data.length);
 
     } catch (error) {

@@ -17,6 +17,7 @@ import {
 } from "../components/ui/table";
 import axios from "axios";
 import { Pencil, Trash } from "lucide-react";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Brands() {
   const [brands, setBrands] = useState([]);
@@ -48,7 +49,7 @@ export default function Brands() {
       if (editId) {
         // 🔥 UPDATE
         res = await axios.put(
-          `http://localhost:5000/api/brands/${editId}`,
+          `${BASE_URL}/brands/${editId}`,
           form,
           {
             headers: {
@@ -59,7 +60,7 @@ export default function Brands() {
       } else {
         // 🔥 CREATE
         res = await axios.post(
-          "http://localhost:5000/api/brands",
+          `${BASE_URL}/brands`,
           form,
           {
             headers: {
@@ -84,7 +85,7 @@ export default function Brands() {
   };
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/brands/${id}`);
+      await axios.delete(`${BASE_URL}/brands/${id}`);
       await fetchBrands();
     } catch (error) {
       console.error(error);
@@ -98,7 +99,7 @@ export default function Brands() {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/brands");
+      const res = await axios.get(`${BASE_URL}/brands`);
       setBrands(res.data.data);
       console.log(res.data.data);
     } catch (error) {
