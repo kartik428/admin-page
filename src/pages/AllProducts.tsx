@@ -13,6 +13,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Pencil, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AllProducts() {
     const [products, setProducts] = useState([]);
@@ -22,7 +23,7 @@ export default function AllProducts() {
     // ================= FETCH =================
     const getProducts = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/products");
+            const res = await axios.get(`${BASE_URL}/products`);
             setProducts(res.data.data);
         } catch (error) {
             console.error(error);
@@ -31,7 +32,7 @@ export default function AllProducts() {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/products/${id}`);
+            await axios.delete(`${BASE_URL}/products/${id}`);
             await getProducts();
         } catch (error) {
             console.error(error);
@@ -39,7 +40,7 @@ export default function AllProducts() {
     }
     const handleStatus = async (id) => {
         try {
-            await axios.put(`http://localhost:5000/api/products/${id}/status`);
+            await axios.put(`${BASE_URL}/products/${id}/status`);
             await getProducts();
         } catch (error) {
             console.error(error);

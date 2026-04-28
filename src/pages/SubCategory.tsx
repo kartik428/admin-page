@@ -17,6 +17,7 @@ import {
 } from "../components/ui/table";
 import { Badge, Pencil, Trash } from "lucide-react";
 import axios from 'axios'
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function SubCategory() {
 
@@ -63,7 +64,7 @@ export default function SubCategory() {
   };
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/category");
+      const res = await axios.get(`${BASE_URL}/category`);
 
       console.log(res.data.data);
 
@@ -81,7 +82,7 @@ export default function SubCategory() {
   const fetchSubCategory = async () => {
     try {
       const res = await axios(
-        `http://localhost:5000/api/subcategory?page=${page}&limit=${limit}&search=${search}`
+        `${BASE_URL}/subcategory?page=${page}&limit=${limit}&search=${search}`
       );
 
       console.log(res.data);
@@ -117,7 +118,7 @@ export default function SubCategory() {
       if (editId) {
         // 🔥 UPDATE
         res = await axios.put(
-          `http://localhost:5000/api/subcategory/${editId}`,
+          `${BASE_URL}/subcategory/${editId}`,
           form,
           {
             headers: {
@@ -128,7 +129,7 @@ export default function SubCategory() {
       } else {
         // 🔥 CREATE
         res = await axios.post(
-          "http://localhost:5000/api/subcategory",
+          `${BASE_URL}/subcategory`,
           form,
           {
             headers: {
@@ -164,7 +165,7 @@ export default function SubCategory() {
   );
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/subcategory/${id}`);
+      await axios.delete(`${BASE_URL}/subcategory/${id}`);
 
       // refresh data
       await fetchSubCategory();
@@ -175,7 +176,7 @@ export default function SubCategory() {
   };
   const handleToggleStatus = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/subcategory/${id}/status`);
+      await axios.patch(`${BASE_URL}/subcategory/${id}/status`);
 
       // refresh data
       await fetchSubCategory();
@@ -186,7 +187,7 @@ export default function SubCategory() {
   };
   const handleToggleTrend = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/subcategory/${id}/trend`);
+      await axios.patch(`${BASE_URL}/subcategory/${id}/trend`);
 
       await fetchSubCategory(); // refresh UI
 

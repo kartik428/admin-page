@@ -17,6 +17,8 @@ import {
 } from "../components/ui/table";
 import axios from "axios";
 import { Pencil, Trash } from "lucide-react";
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 
 
 
@@ -39,7 +41,7 @@ export default function Category() {
   // ================= FETCH =================
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/category");
+      const res = await axios.get(`${BASE_URL}/category`);
       setData(res.data.data);
     } catch (err) {
       console.error(err);
@@ -76,7 +78,7 @@ export default function Category() {
       if (editId) {
         // 🔥 UPDATE
         res = await axios.put(
-          `http://localhost:5000/api/category/${editId}`,
+          `${BASE_URL}/category/${editId}`,
           fd,
           {
             headers: {
@@ -87,7 +89,7 @@ export default function Category() {
       } else {
         // 🔥 CREATE
         res = await axios.post(
-          "http://localhost:5000/api/category",
+          `${BASE_URL}/category`,
           fd,
           {
             headers: {
@@ -131,7 +133,7 @@ export default function Category() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/category/${id}`);
+      await axios.delete(`${BASE_URL}/category/${id}`);
       fetchCategories();
     } catch (err) {
       console.error(err);
@@ -139,7 +141,7 @@ export default function Category() {
   };
   const handleToggleStatus = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/category/${id}/status`);
+      await axios.patch(`${BASE_URL}/category/${id}/status`);
 
       // refresh data
       await fetchCategories();

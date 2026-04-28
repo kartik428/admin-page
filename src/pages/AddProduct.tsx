@@ -7,6 +7,7 @@ import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { useParams, useNavigate } from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AddProduct() {
   const { id } = useParams();
@@ -41,21 +42,21 @@ export default function AddProduct() {
 
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:5000/api/category");
+    const res = await axios.get(`${BASE_URL}/category`);
     setCategories(res.data.data);
   };
 
   const fetchSubCategories = async () => {
-    const res = await axios.get("http://localhost:5000/api/subcategory");
+    const res = await axios.get(`${BASE_URL}/subcategory`);
     setSubCategories(res.data.data);
   };
 
   const fetchBrands = async () => {
-    const res = await axios.get("http://localhost:5000/api/brands");
+    const res = await axios.get(`${BASE_URL}/brands`);
     setBrands(res.data.data);
   };
   const fetchProducts = async () => {
-    const res = await axios.get("http://localhost:5000/api/products");
+    const res = await axios.get(`${BASE_URL}/products`);
     console.log(res.data.data);
   };
 
@@ -111,14 +112,14 @@ export default function AddProduct() {
       if (id) {
         // UPDATE
         await axios.put(
-          `http://localhost:5000/api/products/${id}`,
+          `${BASE_URL}/products/${id}`,
           fd
         );
         alert("Product Updated ✅");
       } else {
         // CREATE
         await axios.post(
-          "http://localhost:5000/api/products",
+          `${BASE_URL}/products`,
           fd
         );
         alert("Product Added ✅");
@@ -155,7 +156,7 @@ export default function AddProduct() {
   
   const fetchSingleProduct = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/products/${id}`);
+      const res = await axios.get(`${BASE_URL}/products/${id}`);
       console.log("API RESPONSE:", res.data);
 
       const data = res.data?.product;
