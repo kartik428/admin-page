@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AddProduct from "./pages/AddProduct";
 import AllProducts from "./pages/AllProducts";
 import ManageCustomers from "./pages/ManageCustomers";
+import SubscriptionPage from "./pages/SubscriptionPage";
 
 const App = () => {
   
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/addprod/:id" element={<AddProduct />} />
           <Route path="/allprod" element={<AllProducts />} />
           <Route path="/customer" element={<ManageCustomers/> } />
+          <Route path="/subscriptions" element={<SubscriptionPage/> } />
         </Route>
       </Routes>
     </BrowserRouter>

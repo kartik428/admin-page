@@ -133,7 +133,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 </div>
 
                 {/* Subscription */}
-                <div className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-200 cursor-pointer">
+                <div  onClick={() => navigate("/subscriptions")} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-200 cursor-pointer">
                     <IndianRupee size={18} />
                     Subscription Plans
                 </div>
