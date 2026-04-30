@@ -24,13 +24,14 @@ type BrandType = {
 };
 
 type FormType = {
+
   title: string;
   slug: string;
   price: string;
   discountPrice: string;
   color: string;
   fabric: string;
-  sizes: string[]; // 🔥 IMPORTANT
+  sizes: string[];
   description: string;
   categoryId: string;
   subCategoryId: string;
@@ -85,10 +86,7 @@ export default function AddProduct() {
     const res = await axios.get(`${BASE_URL}/brands`);
     setBrands(res.data.data);
   };
-  const fetchProducts = async () => {
-    const res = await axios.get(`${BASE_URL}/products`);
-    console.log(res.data.data);
-  };
+
 
   // ================= HANDLE =================
   const handleChange = (
@@ -130,11 +128,11 @@ export default function AddProduct() {
       if (!image) return alert("Product image is required");
       const fd = new FormData();
 
-      Object.keys(form).forEach((key) => {
+      (Object.keys(form) as (keyof FormType)[]).forEach((key) => {
         if (key === "sizes") {
           fd.append("sizes", JSON.stringify(form.sizes));
         } else {
-          fd.append(key, form[key]);
+          fd.append(key, form[key] as string);
         }
       });
 
@@ -201,8 +199,8 @@ export default function AddProduct() {
       setForm({
         title: data.title || "",
         slug: data.slug || "",
-        price: data.price || "",
-        discountPrice: data.discountPrice || "",
+        price: String(data.price || ""),
+        discountPrice: String(data.discountPrice || ""),
         color: data.color || "",
         fabric: data.fabric || "",
         sizes: data.sizes || [],

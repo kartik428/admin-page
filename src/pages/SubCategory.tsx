@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { Badge, Pencil, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -27,6 +27,10 @@ type SubCategoryType = {
   sortOrder?: number;
   status?: string;
   inTrend?: boolean;
+  slug?: string;
+  metaTitle?: string;
+  metaKeywords?: string[];
+  metaDescription?: string;
 };
 
 type CategoryType = {
@@ -98,7 +102,7 @@ export default function SubCategory() {
       const res = await axios(
         `${BASE_URL}/subcategory?page=${page}&limit=${limit}&search=${search}`
       );
-
+      setTotal(res.data.total || 0);
       console.log(res.data);
       setData(res.data.data);
     } catch (error) {
@@ -209,7 +213,7 @@ export default function SubCategory() {
       console.error(error);
     }
   };
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.max(1, Math.ceil(total / limit));
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Manage Sub Categories</h1>

@@ -108,6 +108,7 @@ export default function Brands() {
     try {
       const res = await axios.get(`${BASE_URL}/brands`);
       setBrands(res.data.data);
+      setTotal(res.data.total || res.data.data.length);
       console.log(res.data.data);
     } catch (error) {
       console.error(error)
@@ -204,7 +205,7 @@ export default function Brands() {
 
                     <TableCell>
                       <img
-                        src={`http://localhost:5000/${brand.banner}`}
+                        src={brand.banner ? `http://localhost:5000/${brand.banner}` : "/placeholder.png"}
                         className="w-14 h-14 object-cover rounded-md"
                       />
                     </TableCell>
