@@ -23,12 +23,14 @@ type UserType = {
   _id: string;
   name: string;
   email: string;
+  accountType: string;
   phone: string;
   createdAt: string;
   totalOrders?: number;
   totalPurchase?: number;
 };
 type FormType = {
+  accountType: string;
   name: string;
   email: string;
   phone: string;
@@ -43,6 +45,7 @@ export default function ManageCustomers() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormType>({
+    accountType: "",
     name: "",
     email: "",
     phone: "",
@@ -77,6 +80,7 @@ export default function ManageCustomers() {
       setOpen(false);
 
       setForm({
+        accountType: "",
         name: "",
         email: "",
         phone: "",
@@ -124,6 +128,7 @@ export default function ManageCustomers() {
             <TableHeader>
               <TableRow>
                 <TableHead>S.No</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Member Since</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Contact</TableHead>
@@ -137,6 +142,16 @@ export default function ManageCustomers() {
               {users.map((user: UserType, index: number) => (
                 <TableRow key={user._id}>
                   <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded text-xs ${user.accountType === "B2B"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-green-100 text-green-700"
+                        }`}
+                    >
+                      {user.accountType}
+                    </span>
+                  </TableCell>
 
                   <TableCell>
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -184,6 +199,14 @@ export default function ManageCustomers() {
 
               {/* FORM */}
               <div className="space-y-4">
+                <select
+                  value={form.accountType}
+                  onChange={(e) => setForm({ ...form, accountType: e.target.value })}
+                  className="w-full border rounded-md p-2 text-sm"
+                >
+                  <option>B2B</option>
+                  <option>B2C</option>
+                </select>
 
                 <Input
                   placeholder="Name"

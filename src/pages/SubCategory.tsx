@@ -134,7 +134,7 @@ export default function SubCategory() {
       let res;
 
       if (editId) {
-        // 🔥 UPDATE
+        //  UPDATE
         res = await axios.put(
           `${BASE_URL}/subcategory/${editId}`,
           form,
@@ -145,7 +145,7 @@ export default function SubCategory() {
           }
         );
       } else {
-        // 🔥 CREATE
+        //  CREATE
         res = await axios.post(
           `${BASE_URL}/subcategory`,
           form,
