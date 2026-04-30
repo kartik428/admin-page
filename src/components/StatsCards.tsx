@@ -18,7 +18,7 @@ export default function StatsCards() {
 
   const cards = [
     {
-      
+
       title: "Products Listed",
       value: totalprod,
       icon: Package,
@@ -66,7 +66,7 @@ export default function StatsCards() {
         return (
           <Card
             key={i}
-             onClick={() => navigate(c.route)} 
+            onClick={() => c.route && navigate(c.route)}
             className={`bg-gradient-to-r ${c.gradient} text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1`}
           >
             <CardContent className="p-5 flex items-center justify-between">
