@@ -19,14 +19,28 @@ import { Badge, Pencil, Trash } from "lucide-react";
 import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+type SubCategoryType = {
+  _id: string;
+  title: string;
+  image?: string;
+  categoryId?: string;
+  sortOrder?: number;
+  status?: string;
+  inTrend?: boolean;
+};
+
+type CategoryType = {
+  _id: string;
+  title: string;
+};
+
 export default function SubCategory() {
 
-  const [data, setData] = useState([]);
-  const [editId, setEditId] = useState(null);
+  const [data, setData] = useState<SubCategoryType[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [search, setSearch] = useState("");
-  const [image, setImage] = useState(null);
-  const [categories, setCategories] = useState([]);
-  // const [categoryId, setCategoryId] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -41,7 +55,7 @@ export default function SubCategory() {
   const limit = 10;
 
 
-  const handleEdit = (item) => {
+  const handleEdit = (item: SubCategoryType) => {
     setEditId(item._id);
 
     setFormData({
@@ -54,7 +68,7 @@ export default function SubCategory() {
     });
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -163,7 +177,7 @@ export default function SubCategory() {
   const filtered = data.filter((item) =>
     item.title?.toLowerCase().includes(search.toLowerCase())
   );
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       await axios.delete(`${BASE_URL}/subcategory/${id}`);
 
@@ -174,7 +188,7 @@ export default function SubCategory() {
       console.error(error);
     }
   };
-  const handleToggleStatus = async (id) => {
+  const handleToggleStatus = async (id: string) => {
     try {
       await axios.patch(`${BASE_URL}/subcategory/${id}/status`);
 
@@ -185,7 +199,7 @@ export default function SubCategory() {
       console.error(error);
     }
   };
-  const handleToggleTrend = async (id) => {
+  const handleToggleTrend = async (id: string) => {
     try {
       await axios.patch(`${BASE_URL}/subcategory/${id}/trend`);
 
@@ -213,16 +227,6 @@ export default function SubCategory() {
             {/* Parent Category */}
             <div>
               <label className="text-sm font-medium">Choose Main Category</label>
-              {/* <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleChange}
-                className="w-full border rounded-md p-2 text-sm"
-              >
-                <option value="">Select Category</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Electronics">Electronics</option>
-              </select> */}
               <select
                 name="categoryId"
                 value={formData.categoryId}
@@ -231,7 +235,7 @@ export default function SubCategory() {
               >
                 <option value="">Select Category</option>
 
-                {categories.map((cat) => (
+                {categories.map((cat: CategoryType) => (
                   <option key={cat._id} value={cat.title}>
                     {cat.title}
                   </option>
@@ -266,7 +270,14 @@ export default function SubCategory() {
 
             <div>
               <label className="text-sm font-medium">Image</label>
-              <Input type="file" onChange={(e) => setImage(e.target.files[0])} />
+              <Input
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setImage(e.target.files[0]);
+                  }
+                }}
+              />
             </div>
 
             <Button onClick={handleSubmit} className="w-full">
@@ -310,7 +321,7 @@ export default function SubCategory() {
               </TableHeader>
 
               <TableBody>
-                {filtered.map((item) => (
+                {filtered.map((item: SubCategoryType) => (
                   <TableRow key={item._id}>
 
                     {/* Sort */}

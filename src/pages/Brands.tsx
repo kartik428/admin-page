@@ -17,16 +17,23 @@ import {
 } from "../components/ui/table";
 import axios from "axios";
 import { Pencil, Trash } from "lucide-react";
+
+type BrandType = {
+  _id: string;
+  title: string;
+  banner?: string;
+  totalProducts?: number;
+};
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Brands() {
-  const [brands, setBrands] = useState([]);
+  const [brands, setBrands] = useState<BrandType[]>([]);
+  const [banner, setBanner] = useState<File | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [title, setTitle] = useState("");
-  const [banner, setBanner] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [editId, setEditId] = useState(null);
   const limit = 10;
   const totalPages = Math.ceil(total / limit);
 
@@ -83,7 +90,7 @@ export default function Brands() {
       console.error(error);
     }
   };
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       await axios.delete(`${BASE_URL}/brands/${id}`);
       await fetchBrands();
@@ -92,7 +99,7 @@ export default function Brands() {
 
     }
   }
-  const handleEdit = (brand) => {
+  const handleEdit = (brand: BrandType) => {
     setEditId(brand._id);
     setTitle(brand.title);
   };
@@ -143,7 +150,11 @@ export default function Brands() {
               <label className="text-sm font-medium">Brand Logo</label>
               <Input
                 type="file"
-                onChange={(e) => setBanner(e.target.files[0])}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setBanner(e.target.files[0]);
+                  }
+                }}
               />
             </div>
 
@@ -186,7 +197,7 @@ export default function Brands() {
               </TableHeader>
 
               <TableBody>
-                {filtered.map((brand, index) => (
+                {filtered.map((brand: BrandType, index: number) => (
                   <TableRow key={brand._id}>
 
                     <TableCell>{index + 1}</TableCell>

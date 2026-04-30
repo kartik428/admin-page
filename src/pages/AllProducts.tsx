@@ -13,10 +13,28 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Pencil, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+type ProductType = {
+    _id: string;
+    title: string;
+    image?: string;
+    price: number;
+    status?: string;
+    color?: string;
+    fabric?: string;
+    sizes?: string[];
+    categoryId?: {
+        title: string;
+    };
+    subCategoryId?: {
+        title: string;
+    };
+};
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AllProducts() {
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<ProductType[]>([]);
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
 
@@ -30,7 +48,7 @@ export default function AllProducts() {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id: string) => {
         try {
             await axios.delete(`${BASE_URL}/products/${id}`);
             await getProducts();
@@ -38,7 +56,7 @@ export default function AllProducts() {
             console.error(error);
         }
     }
-    const handleStatus = async (id) => {
+    const handleStatus = async (id: string) => {
         try {
             await axios.put(`${BASE_URL}/products/${id}/status`);
             await getProducts();
@@ -90,7 +108,7 @@ export default function AllProducts() {
                         </TableHeader>
 
                         <TableBody>
-                            {filtered.map((item, index) => (
+                            {filtered.map((item: ProductType, index: number) => (
                                 <TableRow key={item._id}>
 
                                     {/* SNO */}
@@ -131,7 +149,7 @@ export default function AllProducts() {
 
                                         {/* SIZES */}
                                         <div className="flex gap-1 mt-1">
-                                            {item.sizes?.map((s, i) => (
+                                            {item.sizes?.map((s: string, i: number) => (
                                                 <span
                                                     key={i}
                                                     className="bg-black text-white px-1.5 py-[2px] rounded text-[10px] leading-none"
@@ -157,8 +175,8 @@ export default function AllProducts() {
                                         <Button size="sm" onClick={() => handleStatus(item._id)} variant="outline">
                                             {item.status === "active" ? "Disable" : "Enable"}
                                         </Button>
-                                        <Button size="sm"  onClick={() => navigate(`/addprod/${item._id}`)} variant="secondary"> <Pencil/> </Button>
-                                        <Button size="sm" onClick={() => handleDelete(item._id)} variant="destructive"> <Trash/> </Button>
+                                        <Button size="sm" onClick={() => item._id && navigate(`/addprod/${item._id}`)} variant="secondary"> <Pencil /> </Button>
+                                        <Button size="sm" onClick={() => handleDelete(item._id)} variant="destructive"> <Trash /> </Button>
                                     </TableCell>
 
                                 </TableRow>

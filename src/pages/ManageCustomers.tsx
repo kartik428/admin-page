@@ -19,11 +19,30 @@ import {
 } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 
+type UserType = {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+  totalOrders?: number;
+  totalPurchase?: number;
+};
+type FormType = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
+
+
+
+
 export default function ManageCustomers() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormType>({
     name: "",
     email: "",
     phone: "",
@@ -74,7 +93,7 @@ export default function ManageCustomers() {
   };
 
   // ================= DELETE =================
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       const confirmDelete = window.confirm("Delete this user?");
       if (!confirmDelete) return;
@@ -115,7 +134,7 @@ export default function ManageCustomers() {
             </TableHeader>
 
             <TableBody>
-              {users.map((user, index) => (
+              {users.map((user: UserType, index: number) => (
                 <TableRow key={user._id}>
                   <TableCell>{index + 1}</TableCell>
 
@@ -195,7 +214,7 @@ export default function ManageCustomers() {
                   className="w-full bg-red-500 hover:bg-red-600"
                   onClick={handleAddCustomer}
                 >
-                  {loading ? "Adding..." : "Add Customer" }
+                  {loading ? "Adding..." : "Add Customer"}
                 </Button>
 
               </div>

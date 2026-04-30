@@ -13,7 +13,11 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Sidebar({ isOpen }: any) {
+type SidebarProps = {
+  isOpen: boolean;
+};
+
+export default function Sidebar({ isOpen }: SidebarProps) {
     const navigate = useNavigate();
     const [openOrders, setOpenOrders] = useState(false);
     const [openProducts, setOpenProducts] = useState(false);

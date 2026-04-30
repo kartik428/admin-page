@@ -17,15 +17,30 @@ import {
 } from "../components/ui/table";
 import axios from "axios";
 import { Pencil, Trash } from "lucide-react";
+
+type CategoryType = {
+  _id: string;
+  title: string;
+  slug?: string;
+  image?: string;
+  status?: string;
+  sortOrder?: number;
+  metaTitle?: string;
+  metaKeywords?: string[];
+  metaDescription?: string;
+};
+
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 
 
 
 export default function Category() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<CategoryType[]>([]);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [search, setSearch] = useState("");
-  const [editId, setEditId] = useState(null);
 
   // form state
   const [form, setForm] = useState({
@@ -36,7 +51,6 @@ export default function Category() {
     metaDescription: "",
   });
 
-  const [image, setImage] = useState(null);
 
   // ================= FETCH =================
   const fetchCategories = async () => {
@@ -53,7 +67,9 @@ export default function Category() {
   }, []);
 
   // ================= FORM CHANGE =================
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -119,7 +135,7 @@ export default function Category() {
     }
   };
 
-  const handleEdit = (item) => {
+  const handleEdit = (item: CategoryType) => {
     setEditId(item._id);
 
     setForm({
@@ -131,7 +147,7 @@ export default function Category() {
     });
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     try {
       await axios.delete(`${BASE_URL}/category/${id}`);
       fetchCategories();
@@ -139,7 +155,7 @@ export default function Category() {
       console.error(err);
     }
   };
-  const handleToggleStatus = async (id) => {
+  const handleToggleStatus = async (id: string) => {
     try {
       await axios.patch(`${BASE_URL}/category/${id}/status`);
 
@@ -200,7 +216,14 @@ export default function Category() {
 
             <div>
               <label className="text-sm font-medium">Main Category Image</label>
-              <Input onChange={(e) => setImage(e.target.files[0])} type="file" />
+              <Input
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setImage(e.target.files[0]);
+                  }
+                }}
+              />
             </div>
 
             <Button className="w-full" onClick={handleSubmit}>
@@ -245,7 +268,7 @@ export default function Category() {
 
               <TableBody>
                 {filteredData.length > 0 ? (
-                  filteredData.map((item) => (
+                  filteredData.map((item: CategoryType) => (
                     <TableRow key={item._id}>
                       {/* Sort */}
                       <TableCell>
@@ -261,6 +284,7 @@ export default function Category() {
                           }
                           className="w-12 h-12 rounded-md"
                         />
+
                       </TableCell>
 
                       <TableCell>{item.title}</TableCell>

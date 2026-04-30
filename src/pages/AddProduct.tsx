@@ -7,12 +7,42 @@ import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { useParams, useNavigate } from "react-router-dom";
+
+type CategoryType = {
+  _id: string;
+  title: string;
+};
+
+type SubCategoryType = {
+  _id: string;
+  title: string;
+};
+
+type BrandType = {
+  _id: string;
+  title: string;
+};
+
+type FormType = {
+  title: string;
+  slug: string;
+  price: string;
+  discountPrice: string;
+  color: string;
+  fabric: string;
+  sizes: string[]; // 🔥 IMPORTANT
+  description: string;
+  categoryId: string;
+  subCategoryId: string;
+  brandId: string;
+};
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function AddProduct() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormType>({
     title: "",
     slug: "",
     price: "",
@@ -26,11 +56,11 @@ export default function AddProduct() {
     brandId: "",
   });
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<File | null>(null);
 
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [subCategories, setSubCategories] = useState<SubCategoryType[]>([]);
+  const [brands, setBrands] = useState<BrandType[]>([]);
 
   // ================= FETCH =================
   useEffect(() => {
@@ -61,11 +91,13 @@ export default function AddProduct() {
   };
 
   // ================= HANDLE =================
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSize = (size) => {
+  const handleSize = (size: string) => {
     setForm((prev) => ({
       ...prev,
       sizes: prev.sizes.includes(size)
@@ -153,7 +185,7 @@ export default function AddProduct() {
       fetchSingleProduct();
     }
   }, [id, categories, subCategories, brands]);
-  
+
   const fetchSingleProduct = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/products/${id}`);
@@ -208,7 +240,7 @@ export default function AddProduct() {
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((c) => (
+                  {categories.map((c: CategoryType) => (
                     <SelectItem key={c._id} value={c._id}>
                       {c.title}
                     </SelectItem>
@@ -228,7 +260,7 @@ export default function AddProduct() {
                   <SelectValue placeholder="Select SubCategory" />
                 </SelectTrigger>
                 <SelectContent>
-                  {subCategories.map((s) => (
+                  {subCategories.map((s: SubCategoryType) => (
                     <SelectItem key={s._id} value={s._id}>
                       {s.title}
                     </SelectItem>
@@ -248,7 +280,7 @@ export default function AddProduct() {
                   <SelectValue placeholder="Select Brand" />
                 </SelectTrigger>
                 <SelectContent>
-                  {brands.map((b) => (
+                  {brands.map((b: BrandType) => (
                     <SelectItem key={b._id} value={b._id}>
                       {b.title}
                     </SelectItem>
@@ -327,7 +359,14 @@ export default function AddProduct() {
             {/* IMAGE */}
             <div>
               <Label >Product Image</Label>
-              <Input type="file" onChange={(e) => setImage(e.target.files[0])} />
+              <Input
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setImage(e.target.files[0]);
+                  }
+                }}
+              />
             </div>
 
           </CardContent>
