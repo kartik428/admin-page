@@ -161,7 +161,7 @@ export default function Coupons() {
             <TableBody>
               {coupons.length > 0 ? (
                 coupons.map((c, index) => (
-                  <TableRow key={c.id}>
+                  <TableRow key={c._id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{c.code}</TableCell>
                     <TableCell>{c.discountValue}%</TableCell>
