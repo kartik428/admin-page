@@ -9,7 +9,6 @@ import {
     Users,
     Mail,
     IndianRupee,
-    Ticket,
     TicketCheck,
 } from "lucide-react";
 import { useState } from "react";
@@ -126,7 +125,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     {/* Submenu */}
                     {openOrders && (
                         <div className="ml-8 mt-1 space-y-2 text-gray-500">
-                            <div onClick={() => navigate(`/orders/all`)} className="cursor-pointer hover:text-gray-600">→ All Orders</div>
+                            <div onClick={() => navigate(`/orders`)} className="cursor-pointer hover:text-gray-600">→ All Orders</div>
                             {/* <div className="cursor-pointer hover:text-gray-600">→ Dispatched Orders</div>
                             <div className="cursor-pointer hover:text-gray-600">→ Delivered Orders</div>
                             <div className="cursor-pointer hover:text-gray-600">→ Completed Orders</div>
