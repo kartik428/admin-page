@@ -9,14 +9,33 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useEffect, useState } from "react";
+
+type OrderItem = {
+    name: string;
+    price: number;
+    quantity: number;
+};
+
+type OrderType = {
+    _id: string;
+    status: "pending" | "confirmed" | "cancelled";
+    total: number;
+    createdAt: string;
+    shippingAddress?: {
+        fullName: string;
+    };
+    items: OrderItem[];
+};
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+
+
 const ViewOrder = () => {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
-    // TEMP: same fake data (later replace with API)
-    const [order, setOrder] = useState(null);
+    const [order, setOrder] = useState<OrderType | null>(null);
 
     useEffect(() => {
         fetchOrderById();
@@ -26,8 +45,7 @@ const ViewOrder = () => {
         try {
             const res = await axios.get(`${BASE_URL}/orders/${id}`);
             setOrder(res.data.order);
-            // console.log(res.data.order);
-            
+
         } catch (error) {
             console.log(error.response?.data || error.message);
         }
@@ -71,7 +89,10 @@ const ViewOrder = () => {
                         {/* Customer Info */}
                         <div>
                             <p className="text-sm text-muted-foreground">Customer</p>
-                            <p className="font-medium">{order.shippingAddress?.fullName}</p>
+                            <p className="font-medium">
+                                {order.shippingAddress?.fullName || "N/A"}
+                            </p>
+
                         </div>
 
                         <div>
@@ -103,7 +124,10 @@ const ViewOrder = () => {
                         {/* Total */}
                         <div className="flex justify-between font-semibold text-lg pt-4 border-t">
                             <span>Total</span>
-                            <span>₹{order.total.toLocaleString()}</span>
+
+                            <span>
+                                ₹{order.total?.toLocaleString?.("en-IN") || 0}
+                            </span>
                         </div>
 
 

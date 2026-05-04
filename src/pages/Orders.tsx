@@ -26,18 +26,36 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+type OrderItem = {
+    name: string;
+    price: number;
+    quantity: number;
+};
+
+type OrderType = {
+    _id: string;
+    status: "pending" | "confirmed" | "cancelled";
+    total: number;
+    createdAt: string;
+    shippingAddress?: {
+        fullName: string;
+    };
+    items: OrderItem[];
+};
+
 
 const Orders = () => {
 
-    const { status } = useParams();
+    const { status } = useParams<{ status?: string }>();
     const navigate = useNavigate();
     const BASE_URL = import.meta.env.VITE_API_URL;
 
-    const [orders, setOrders] = useState([]);
+    const [orders, setOrders] = useState<OrderType[]>([]);
+    const [loading, setLoading] = useState(true);
 
 
 
-    const filteredOrders =
+    const filteredOrders: OrderType[] =
         status && status !== "all"
             ? orders.filter((o) => o.status === status)
             : orders;
@@ -48,6 +66,7 @@ const Orders = () => {
 
     const fetchOrders = async () => {
         try {
+            setLoading(true);
             const res = await axios.get(`${BASE_URL}/orders`);
             setOrders(res.data.data);
             console.log(res.data.data);
@@ -55,10 +74,19 @@ const Orders = () => {
         } catch (error) {
             console.error(error);
 
+        } finally {
+            setLoading(false);
         }
     }
 
-    const updateStatus = async (id, status) => {
+    if (loading) {
+        return <div className="p-6">Loading orders...</div>;
+    }
+
+    const updateStatus = async (
+        id: string,
+        status: OrderType["status"]
+    ) => {
         try {
             await axios.put(`${BASE_URL}/orders/${id}`, { status });
 
@@ -136,17 +164,17 @@ const Orders = () => {
                                         <TableCell>{order._id}</TableCell>
                                         <TableCell>{order.shippingAddress?.fullName}</TableCell>
                                         <TableCell>
-                                            {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                                            {(order.items || []).reduce((sum, item) => sum + item.quantity, 0)}
                                         </TableCell>
 
                                         <TableCell>
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </TableCell>
 
-                                        <TableCell>₹{order.total.toLocaleString("en-IN", {
+                                        <TableCell>₹{order.total?.toLocaleString("en-IN", {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2,
-                                        })}</TableCell>
+                                        }) || 0}</TableCell>
 
                                         <TableCell>
 
