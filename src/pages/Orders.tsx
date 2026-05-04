@@ -25,6 +25,12 @@ import { Eye } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 type OrderItem = {
     name: string;
@@ -52,6 +58,9 @@ const Orders = () => {
 
     const [orders, setOrders] = useState<OrderType[]>([]);
     const [loading, setLoading] = useState(true);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<OrderType["status"]>("pending");
 
 
 
@@ -112,7 +121,8 @@ const Orders = () => {
                         {/* <Button>+ New Order</Button> */}
                         <Select
                             value={status || "all"}
-                            onValueChange={(value) => navigate(`/orders/${value}`)}>
+                            onValueChange={(value) => navigate(`/orders/${value}`)}
+                        >
                             <SelectTrigger className="w-[150px]">
                                 <SelectValue placeholder="Filter" />
                             </SelectTrigger>
@@ -123,6 +133,7 @@ const Orders = () => {
                                 <SelectItem value="cancelled">Cancelled</SelectItem>
                             </SelectContent>
                         </Select>
+
                     </div>
 
                 </CardHeader>
@@ -180,7 +191,11 @@ const Orders = () => {
 
                                             <Select
                                                 value={order.status}
-                                                onValueChange={(value) => updateStatus(order._id, value)}
+                                                onValueChange={(value) => {
+                                                    setSelectedOrderId(order._id);
+                                                    setSelectedStatus(value as OrderType["status"]);
+                                                    setOpenDialog(true);
+                                                }}
                                             >
                                                 <SelectTrigger className="w-[130px]">
                                                     <SelectValue />
@@ -195,6 +210,7 @@ const Orders = () => {
                                         </TableCell>
 
                                         <TableCell>
+
                                             <Button
                                                 onClick={() => navigate(`/orders/view/${order._id}`)}
                                                 variant="ghost"
@@ -216,6 +232,36 @@ const Orders = () => {
                     </Table>
                 </CardContent>
             </Card>
+
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm Status Change</DialogTitle>
+                    </DialogHeader>
+
+                    <p className="text-sm text-muted-foreground">
+                        Are you sure you want to change order status to{" "}
+                        <span className="font-medium">{selectedStatus}</span>?
+                    </p>
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                            Cancel
+                        </Button>
+
+                        <Button
+                            onClick={() => {
+                                if (selectedOrderId && selectedStatus) {
+                                    updateStatus(selectedOrderId, selectedStatus);
+                                }
+                                setOpenDialog(false);
+                            }}
+                        >
+                            Confirm
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

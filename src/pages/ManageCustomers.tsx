@@ -60,14 +60,19 @@ export default function ManageCustomers() {
   }, []);
   const fetchData = async () => {
     try {
-      const usersRes = await axios.get("http://localhost:5000/auth");
-      const statsRes = await axios.get("http://localhost:5000/auth/user-stats");
+      const usersRes = await axios.get<{ data: UserType[] }>(
+        "http://localhost:5000/auth"
+      );
+
+      const statsRes = await axios.get<any[]>(
+        "http://localhost:5000/auth/user-stats"
+      );
 
       const usersData = usersRes.data.data;
       const statsData = statsRes.data;
 
-      const finalData = usersData.map((user) => {
-        const stat = statsData.find((s: any) => s._id === user.email);
+      const finalData = usersData.map((user: UserType) => {
+        const stat = statsData.find((s) => s._id === user.email);
 
         return {
           ...user,
@@ -82,19 +87,6 @@ export default function ManageCustomers() {
       console.error(error);
     }
   };
-  // ================= FETCH USERS =================
-  // const getUsers = async () => {
-  //   try {
-  //     const res = await axios.get("http://localhost:5000/auth");
-  //     setUsers(res.data.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getUsers();
-  // }, []);
 
   const handleAddCustomer = async () => {
     try {
@@ -203,7 +195,7 @@ export default function ManageCustomers() {
                   <TableCell>{user.totalOrders}</TableCell>
 
                   <TableCell>
-                    ₹{user.totalPurchase || 0}
+                    ₹{user.totalPurchase?.toFixed(2) || 0}
                   </TableCell>
 
                   <TableCell className="flex gap-2">
