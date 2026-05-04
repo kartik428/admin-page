@@ -55,35 +55,33 @@ export default function ManageCustomers() {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersRes = await axios.get("http://localhost:5000/auth");
-        const statsRes = await axios.get("http://localhost:5000/auth/user-stats");
-
-        const usersData = usersRes.data.data;
-        const statsData = statsRes.data;
-
-        const finalData = usersData.map((user) => {
-          const stat = statsData.find(
-            (s) => s._id === user.email
-          );
-
-          return {
-            ...user,
-            totalOrders: stat?.totalOrders || 0,
-            totalPurchase: stat?.totalAmount || 0,
-          };
-        });
-
-        setUsers(finalData);
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
 
     fetchData();
   }, []);
+  const fetchData = async () => {
+    try {
+      const usersRes = await axios.get("http://localhost:5000/auth");
+      const statsRes = await axios.get("http://localhost:5000/auth/user-stats");
+
+      const usersData = usersRes.data.data;
+      const statsData = statsRes.data;
+
+      const finalData = usersData.map((user) => {
+        const stat = statsData.find((s: any) => s._id === user.email);
+
+        return {
+          ...user,
+          totalOrders: stat?.totalOrders || 0,
+          totalPurchase: stat?.totalAmount || 0,
+        };
+      });
+
+      setUsers(finalData);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // ================= FETCH USERS =================
   // const getUsers = async () => {
   //   try {
@@ -112,14 +110,14 @@ export default function ManageCustomers() {
       setOpen(false);
 
       setForm({
-        accountType: "",
+        accountType: "B2C",
         name: "",
         email: "",
         phone: "",
         password: "",
       });
 
-      getUsers(); // refresh table
+      await fetchData();
 
     } catch (error) {
       console.error(error);
@@ -235,11 +233,14 @@ export default function ManageCustomers() {
               <div className="space-y-4">
                 <select
                   value={form.accountType}
-                  onChange={(e) => setForm({ ...form, accountType: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, accountType: e.target.value })
+                  }
                   className="w-full border rounded-md p-2 text-sm"
                 >
-                  <option>B2B</option>
-                  <option>B2C</option>
+                  <option value="">Select Type</option>
+                  <option value="B2B">B2B</option>
+                  <option value="B2C">B2C</option>
                 </select>
 
                 <Input
