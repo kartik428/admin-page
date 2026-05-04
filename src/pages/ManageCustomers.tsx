@@ -10,7 +10,7 @@ import {
 } from "../components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Trash } from "lucide-react";
+import { Mail, Phone, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 type UserType = {
   _id: string;
@@ -41,6 +42,7 @@ type FormType = {
 
 
 export default function ManageCustomers() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,19 +54,49 @@ export default function ManageCustomers() {
     password: "",
   });
 
-  // ================= FETCH USERS =================
-  const getUsers = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/auth");
-      setUsers(res.data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    getUsers();
+    const fetchData = async () => {
+      try {
+        const usersRes = await axios.get("http://localhost:5000/auth");
+        const statsRes = await axios.get("http://localhost:5000/auth/user-stats");
+
+        const usersData = usersRes.data.data;
+        const statsData = statsRes.data;
+
+        const finalData = usersData.map((user) => {
+          const stat = statsData.find(
+            (s) => s._id === user.email
+          );
+
+          return {
+            ...user,
+            totalOrders: stat?.totalOrders || 0,
+            totalPurchase: stat?.totalAmount || 0,
+          };
+        });
+
+        setUsers(finalData);
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
   }, []);
+  // ================= FETCH USERS =================
+  // const getUsers = async () => {
+  //   try {
+  //     const res = await axios.get("http://localhost:5000/auth");
+  //     setUsers(res.data.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
   const handleAddCustomer = async () => {
     try {
@@ -157,26 +189,28 @@ export default function ManageCustomers() {
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
 
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium ">
                     {user.name}
                   </TableCell>
 
                   <TableCell>
-                    <div>{user.email}</div>
-                    <div className="text-sm text-gray-500">
-                      {user.phone}
+                    <div className="flex gap-1" >
+                      <Mail className="w-3.5 text-gray-500" />{user.email}
+                    </div>
+                    <div className="text-sm flex gap-1 text-gray-500">
+                      <Phone className="w-3.5" />{user.phone}
                     </div>
                   </TableCell>
 
-                  <TableCell>{user.totalOrders || 0}</TableCell>
+                  <TableCell>{user.totalOrders}</TableCell>
 
                   <TableCell>
                     ₹{user.totalPurchase || 0}
                   </TableCell>
 
                   <TableCell className="flex gap-2">
-                    <Button size="sm" className="bg-green-500 hover:bg-green-600">
-                      (0) View Orders
+                    <Button onClick={() => navigate('/orders/pending')} size="sm" className="bg-green-500 hover:bg-green-600">
+                      ({user.totalOrders}) View Orders
                     </Button>
 
                     <Button

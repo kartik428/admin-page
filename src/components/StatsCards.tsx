@@ -14,6 +14,8 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export default function StatsCards() {
 
   const [totalprod, setTotalProd] = useState(0);
+  const [totalNewOrder, setTotalNewOrder] = useState(0);
+  const [completedOrder, setCompletedOrder] = useState(0);
   const navigate = useNavigate();
 
   const cards = [
@@ -33,26 +35,61 @@ export default function StatsCards() {
     },
     {
       title: "New Orders",
-      value: 0,
+      value: totalNewOrder,
       icon: ShoppingCart,
       gradient: "from-green-500 to-green-700",
+      route: '/orders/pending'
     },
     {
       title: "Completed Orders",
-      value: 0,
+      value: completedOrder,
       icon: CheckCircle,
       gradient: "from-pink-500 to-pink-700",
+      route: '/orders/confirmed'
     },
   ];
   useEffect(() => {
 
     getProducts();
+    getNewOrders();
+    getCompletedOrders();
+
   }, []);
   const getProducts = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/products`)
       setTotalProd(res.data.data.length);
 
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  const getNewOrders = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/orders`);
+
+      const pendingOrders = res.data.data.filter(
+        (o) => o.status === "pending"
+      );
+
+      setTotalNewOrder(pendingOrders.length);
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  const getCompletedOrders = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/orders`);
+
+      const confirmedOrders = res.data.data.filter(
+        (o) => o.status === "confirmed"
+      );
+
+      setCompletedOrder(confirmedOrders.length);
     } catch (error) {
       console.error(error);
 

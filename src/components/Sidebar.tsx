@@ -21,6 +21,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     const navigate = useNavigate();
     const [openOrders, setOpenOrders] = useState(false);
     const [openProducts, setOpenProducts] = useState(false);
+    // const orderStatus = "confirmed"
 
     return (
         <div
@@ -123,11 +124,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     {/* Submenu */}
                     {openOrders && (
                         <div className="ml-8 mt-1 space-y-2 text-gray-500">
-                            <div className="cursor-pointer hover:text-gray-600">→ Confirmed Orders</div>
-                            <div className="cursor-pointer hover:text-gray-600">→ Dispatched Orders</div>
+                            <div onClick={() => navigate(`/orders/all`)} className="cursor-pointer hover:text-gray-600">→ All Orders</div>
+                            {/* <div className="cursor-pointer hover:text-gray-600">→ Dispatched Orders</div>
                             <div className="cursor-pointer hover:text-gray-600">→ Delivered Orders</div>
                             <div className="cursor-pointer hover:text-gray-600">→ Completed Orders</div>
-                            <div className="cursor-pointer hover:text-gray-600">→ Pending Orders</div>
+                            <div className="cursor-pointer hover:text-gray-600">→ Pending Orders</div> */}
                         </div>
                     )}
                 </div>

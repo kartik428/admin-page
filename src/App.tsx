@@ -10,6 +10,8 @@ import AddProduct from "./pages/AddProduct";
 import AllProducts from "./pages/AllProducts";
 import ManageCustomers from "./pages/ManageCustomers";
 import SubscriptionPage from "./pages/SubscriptionPage";
+import Orders from "./pages/Orders";
+import ViewOrder from "./pages/ViewOrder";
 
 const App = () => {
   
@@ -30,6 +32,8 @@ const App = () => {
           <Route path="/allprod" element={<AllProducts />} />
           <Route path="/customer" element={<ManageCustomers/> } />
           <Route path="/subscriptions" element={<SubscriptionPage/> } />
+          <Route path="/orders/:status" element={<Orders />} />
+          <Route path="/orders/view/:id" element={<ViewOrder />} />
         </Route>
       </Routes>
     </BrowserRouter>
