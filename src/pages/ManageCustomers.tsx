@@ -203,7 +203,7 @@ export default function ManageCustomers() {
                   <TableCell>{user.totalOrders}</TableCell>
 
                   <TableCell>
-                    ₹{user.totalPurchase || 0}
+                    ₹{user.totalPurchase?.toFixed(2) || 0}
                   </TableCell>
 
                   <TableCell className="flex gap-2">

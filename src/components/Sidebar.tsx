@@ -9,6 +9,8 @@ import {
     Users,
     Mail,
     IndianRupee,
+    Ticket,
+    TicketCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -155,6 +157,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 <div className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-200 cursor-pointer">
                     <Mail size={18} />
                     Contact Enquiries
+                </div>
+
+                {/* Coupens */}
+                <div onClick={()=> navigate('/coupons')}  className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-200 cursor-pointer">
+                    <TicketCheck size={18} />
+                    Coupons 
                 </div>
 
             </nav>
