@@ -23,6 +23,10 @@ type BrandType = {
   title: string;
 };
 
+type ApiResponse<T> = {
+  data: T;
+};
+
 type FormType = {
 
   title: string;

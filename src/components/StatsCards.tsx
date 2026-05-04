@@ -11,10 +11,24 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+type OrderType = {
+  _id: string;
+  status: "pending" | "confirmed" | "cancelled";
+  total: number;
+  createdAt: string;
+};
+
+type OrdersResponse = {
+  data: OrderType[];
+};
+
 export default function StatsCards() {
 
   const [totalprod, setTotalProd] = useState(0);
+  const [totalNewOrder, setTotalNewOrder] = useState(0);
+  const [completedOrder, setCompletedOrder] = useState(0);
   const navigate = useNavigate();
+
 
   const cards = [
     {
@@ -30,23 +44,28 @@ export default function StatsCards() {
       value: 0,
       icon: MessageCircle,
       gradient: "from-blue-500 to-blue-700",
+      route: '/orders/pending'
     },
     {
       title: "New Orders",
-      value: 0,
+      value: totalNewOrder,
       icon: ShoppingCart,
       gradient: "from-green-500 to-green-700",
+      route: '/orders/pending'
     },
     {
       title: "Completed Orders",
-      value: 0,
+      value: completedOrder,
       icon: CheckCircle,
       gradient: "from-pink-500 to-pink-700",
+      route: '/orders/confirmed'
     },
   ];
   useEffect(() => {
 
     getProducts();
+    getOrdersStats();
+
   }, []);
   const getProducts = async () => {
     try {
@@ -58,6 +77,28 @@ export default function StatsCards() {
 
     }
   }
+
+const getOrdersStats = async () => {
+  try {
+    const res = await axios.get<OrdersResponse>(`${BASE_URL}/orders`);
+
+    const orders = res.data.data;
+
+    const pendingCount = orders.filter(
+      (o) => o.status === "pending"
+    ).length;
+
+    const confirmedCount = orders.filter(
+      (o) => o.status === "confirmed"
+    ).length;
+
+    setTotalNewOrder(pendingCount);
+    setCompletedOrder(confirmedCount);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
       {cards.map((c, i) => {

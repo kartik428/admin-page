@@ -10,7 +10,7 @@ import {
 } from "../components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Trash } from "lucide-react";
+import { Mail, Phone, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,17 +18,20 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 type UserType = {
   _id: string;
   name: string;
   email: string;
+  accountType: string;
   phone: string;
   createdAt: string;
   totalOrders?: number;
   totalPurchase?: number;
 };
 type FormType = {
+  accountType: string;
   name: string;
   email: string;
   phone: string;
@@ -39,29 +42,59 @@ type FormType = {
 
 
 export default function ManageCustomers() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormType>({
+    accountType: "",
     name: "",
     email: "",
     phone: "",
     password: "",
   });
 
-  // ================= FETCH USERS =================
-  const getUsers = async () => {
+  useEffect(() => {
+
+    fetchData();
+  }, []);
+  const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/auth");
-      setUsers(res.data.data);
+      const usersRes = await axios.get("http://localhost:5000/auth");
+      const statsRes = await axios.get("http://localhost:5000/auth/user-stats");
+
+      const usersData = usersRes.data.data;
+      const statsData = statsRes.data;
+
+      const finalData = usersData.map((user) => {
+        const stat = statsData.find((s: any) => s._id === user.email);
+
+        return {
+          ...user,
+          totalOrders: stat?.totalOrders || 0,
+          totalPurchase: stat?.totalAmount || 0,
+        };
+      });
+
+      setUsers(finalData);
+
     } catch (error) {
       console.error(error);
     }
   };
+  // ================= FETCH USERS =================
+  // const getUsers = async () => {
+  //   try {
+  //     const res = await axios.get("http://localhost:5000/auth");
+  //     setUsers(res.data.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
   const handleAddCustomer = async () => {
     try {
@@ -77,13 +110,14 @@ export default function ManageCustomers() {
       setOpen(false);
 
       setForm({
+        accountType: "B2C",
         name: "",
         email: "",
         phone: "",
         password: "",
       });
 
-      getUsers(); // refresh table
+      await fetchData();
 
     } catch (error) {
       console.error(error);
@@ -124,6 +158,7 @@ export default function ManageCustomers() {
             <TableHeader>
               <TableRow>
                 <TableHead>S.No</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Member Since</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Contact</TableHead>
@@ -137,31 +172,43 @@ export default function ManageCustomers() {
               {users.map((user: UserType, index: number) => (
                 <TableRow key={user._id}>
                   <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded text-xs ${user.accountType === "B2B"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-green-100 text-green-700"
+                        }`}
+                    >
+                      {user.accountType}
+                    </span>
+                  </TableCell>
 
                   <TableCell>
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
 
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium ">
                     {user.name}
                   </TableCell>
 
                   <TableCell>
-                    <div>{user.email}</div>
-                    <div className="text-sm text-gray-500">
-                      {user.phone}
+                    <div className="flex gap-1" >
+                      <Mail className="w-3.5 text-gray-500" />{user.email}
+                    </div>
+                    <div className="text-sm flex gap-1 text-gray-500">
+                      <Phone className="w-3.5" />{user.phone}
                     </div>
                   </TableCell>
 
-                  <TableCell>{user.totalOrders || 0}</TableCell>
+                  <TableCell>{user.totalOrders}</TableCell>
 
                   <TableCell>
-                    ₹{user.totalPurchase || 0}
+                    ₹{user.totalPurchase?.toFixed(2) || 0}
                   </TableCell>
 
                   <TableCell className="flex gap-2">
-                    <Button size="sm" className="bg-green-500 hover:bg-green-600">
-                      (0) View Orders
+                    <Button onClick={() => navigate('/orders/pending')} size="sm" className="bg-green-500 hover:bg-green-600">
+                      ({user.totalOrders}) View Orders
                     </Button>
 
                     <Button
@@ -184,6 +231,17 @@ export default function ManageCustomers() {
 
               {/* FORM */}
               <div className="space-y-4">
+                <select
+                  value={form.accountType}
+                  onChange={(e) =>
+                    setForm({ ...form, accountType: e.target.value })
+                  }
+                  className="w-full border rounded-md p-2 text-sm"
+                >
+                  <option value="">Select Type</option>
+                  <option value="B2B">B2B</option>
+                  <option value="B2C">B2C</option>
+                </select>
 
                 <Input
                   placeholder="Name"
