@@ -27,6 +27,9 @@ type PlanType = {
         b2c: number;
     };
 };
+type ApiResponse<T> = {
+    data: T;
+};
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function SubscriptionPage() {
@@ -66,7 +69,7 @@ export default function SubscriptionPage() {
                 },
             };
 
-            let res;
+            let res: { data: ApiResponse<PlanType> };
 
             if (editingId) {
                 // UPDATE
@@ -114,14 +117,16 @@ export default function SubscriptionPage() {
     }, []);
 
     const fetchPlans = async () => {
-        const res = await axios.get(`${BASE_URL}/plans`);
+        const res = await axios.get<{ data: PlanType[] }>(
+            `${BASE_URL}/plans`
+        );
         const data = res.data.data;
         console.log(data);
         setPlans(data);
 
     }
 
-    const handledelete = async (id) => {
+    const handledelete = async (id: string) => {
         try {
             await axios.delete(`${BASE_URL}/plans/${id}`);
 

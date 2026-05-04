@@ -47,7 +47,11 @@ const ViewOrder = () => {
             setOrder(res.data.order);
 
         } catch (error) {
-            console.log(error.response?.data || error.message);
+            if (axios.isAxiosError(error)) {
+                console.log(error.response?.data || error.message);
+            } else {
+                console.log("Unexpected error", error);
+            }
         }
 
     };
