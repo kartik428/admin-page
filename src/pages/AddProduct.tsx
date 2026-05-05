@@ -62,6 +62,7 @@ export default function AddProduct() {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [subCategories, setSubCategories] = useState<SubCategoryType[]>([]);
   const [brands, setBrands] = useState<BrandType[]>([]);
+  const [preview, setPreview] = useState<string | null>(null);
 
   // ================= FETCH =================
   useEffect(() => {
@@ -215,10 +216,12 @@ export default function AddProduct() {
     }
   };
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Add/Edit New Product</h1>
+    <div className="p-6 space-y-6">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Page Title */}
+      <h1 className="text-2xl font-semibold">Add/Edit New Products</h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* LEFT */}
         <Card>
@@ -355,7 +358,7 @@ export default function AddProduct() {
             </div>
 
             {/* IMAGE */}
-            <div>
+            {/* <div>
               <Label >Product Image</Label>
               <Input
                 type="file"
@@ -365,27 +368,51 @@ export default function AddProduct() {
                   }
                 }}
               />
+            </div> */}
+            <div>
+              <Input
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    setImage(file);
+
+                    // create preview
+                    setPreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+              {preview && (
+                <img
+                  src={preview}
+                  alt="preview"
+                  className="w-24 h-24 object-cover rounded-md mt-2 border"
+                />
+              )}
             </div>
+
+
+            {/* SUBMIT */}
+            <Button
+              onClick={handleSubmit}
+              className="mt-6 px-6 py-2 rounded-xl"
+            >
+              {id ? "Update Product" : "Add Product"}
+            </Button>
 
           </CardContent>
         </Card>
 
         {/* RIGHT */}
-        <Card>
+        {/* <Card>
           <CardContent className="pt-6">
 
           </CardContent>
-        </Card>
+        </Card> */}
 
       </div>
 
-      {/* SUBMIT */}
-      <Button
-        onClick={handleSubmit}
-        className="mt-6 px-6 py-2 rounded-xl"
-      >
-        {id ? "Update Product" : "Add Product"}
-      </Button>
+
     </div>
   );
 }
