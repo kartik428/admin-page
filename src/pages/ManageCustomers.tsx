@@ -133,7 +133,8 @@ export default function ManageCustomers() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+       <h1 className="text-2xl font-semibold">Listed Users</h1>
       <Card>
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Listed Users</CardTitle>

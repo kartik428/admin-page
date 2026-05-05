@@ -28,6 +28,7 @@ type Coupon = {
   _id: string;
   code: string;
   discountValue: number;
+  discountType: "percentage" | "flat";
   expiryDate: string;
 };
 
@@ -40,6 +41,7 @@ export default function Coupons() {
   const [form, setForm] = useState({
     code: "",
     discount: "",
+    discountType: "percentage",
     expiry: "",
   });
 
@@ -58,7 +60,7 @@ export default function Coupons() {
 
       const res = await axios.post(`${BASE_URL}/coupons`, {
         code: form.code,
-        discountType: "percentage", // or from form
+        discountType: form.discountType,
         discountValue: Number(form.discount),
         expiryDate: form.expiry,
       });
@@ -70,6 +72,7 @@ export default function Coupons() {
       setForm({
         code: "",
         discount: "",
+        discountType: "percentage",
         expiry: "",
       });
 
@@ -102,124 +105,148 @@ export default function Coupons() {
   };
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="p-6 space-y-6">
 
-      {/* LEFT SIDE - CREATE COUPON */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add / Generate Coupon</CardTitle>
-        </CardHeader>
+      {/* Page Title */}
+      <h1 className="text-2xl font-semibold">Manage Coupons</h1>
 
-        <CardContent className="space-y-4">
-          <Input
-            placeholder="Coupon Code"
-            value={form.code}
-            onChange={(e) => setForm({ ...form, code: e.target.value })}
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-          <Button onClick={generateCode} variant="outline">
-            Generate Code
-          </Button>
+        {/* LEFT SIDE - CREATE COUPON */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Add / Generate Coupon</CardTitle>
+          </CardHeader>
 
-          <Input
-            type="number"
-            placeholder="Discount (%)"
-            value={form.discount}
-            onChange={(e) => setForm({ ...form, discount: e.target.value })}
-          />
+          <CardContent className="space-y-4">
+            <select
+              value={form.discountType}
+              onChange={(e) =>
+                setForm({ ...form, discountType: e.target.value })
+              }
+              className="w-full border rounded-md p-2"
+            >
+              <option value="percentage">Percentage (%)</option>
+              <option value="flat">Flat (₹)</option>
+            </select>
+            <Input
+              placeholder="Coupon Code"
+              value={form.code}
+              onChange={(e) => setForm({ ...form, code: e.target.value })}
+            />
 
-          <Input
-            type="date"
-            value={form.expiry}
-            onChange={(e) => setForm({ ...form, expiry: e.target.value })}
-          />
+            <Button onClick={generateCode} variant="outline">
+              Generate Code
+            </Button>
 
-          <Button className="w-full" onClick={handleAddCoupon}>
-            Add Coupon
-          </Button>
-        </CardContent>
-      </Card>
+            <Input
+              type="number"
+              placeholder={
+                form.discountType === "percentage"
+                  ? "Discount (%)"
+                  : "Discount (₹)"
+              }
+              value={form.discount}
+              onChange={(e) => setForm({ ...form, discount: e.target.value })}
+            />
 
-      {/* RIGHT SIDE - LIST COUPONS */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Coupons</CardTitle>
-        </CardHeader>
+            <Input
+              type="date"
+              value={form.expiry}
+              onChange={(e) => setForm({ ...form, expiry: e.target.value })}
+            />
 
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>S.No</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Discount</TableHead>
-                <TableHead>Expiry</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
+            <Button className="w-full" onClick={handleAddCoupon}>
+              Add Coupon
+            </Button>
+          </CardContent>
+        </Card>
 
-            <TableBody>
-              {coupons.length > 0 ? (
-                coupons.map((c, index) => (
-                  <TableRow key={c._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{c.code}</TableCell>
-                    <TableCell>{c.discountValue}%</TableCell>
-                    <TableCell>{new Date(c.expiryDate).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => {
-                          setSelectedCouponId(c._id);
-                          setOpenDeleteDialog(true);
-                        }}
-                      >
-                        <Trash size={16} />
-                      </Button>
+        {/* RIGHT SIDE - LIST COUPONS */}
+        <Card>
+          <CardHeader>
+            <CardTitle>All Coupons</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>S.No</TableHead>
+                  <TableHead>Code</TableHead>
+                  <TableHead>Discount</TableHead>
+                  <TableHead>Expiry</TableHead>
+                  <TableHead>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {coupons.length > 0 ? (
+                  coupons.map((c, index) => (
+                    <TableRow key={c._id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{c.code}</TableCell>
+                      <TableCell>
+                        {c.discountType === "percentage"
+                          ? `${c.discountValue}%`
+                          : `₹${c.discountValue}`}
+                      </TableCell>
+                      <TableCell>{new Date(c.expiryDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => {
+                            setSelectedCouponId(c._id);
+                            setOpenDeleteDialog(true);
+                          }}
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-6">
+                      No coupons found
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
-                    No coupons found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-      <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Coupon</DialogTitle>
-          </DialogHeader>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+        <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Coupon</DialogTitle>
+            </DialogHeader>
 
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to delete this coupon? This action cannot be undone.
-          </p>
+            <p className="text-sm text-muted-foreground">
+              Are you sure you want to delete this coupon? This action cannot be undone.
+            </p>
 
-          <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={() => setOpenDeleteDialog(false)}>
-              Cancel
-            </Button>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setOpenDeleteDialog(false)}>
+                Cancel
+              </Button>
 
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                if (selectedCouponId) {
-                  await handleDelete(selectedCouponId);
-                }
-                setOpenDeleteDialog(false);
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  if (selectedCouponId) {
+                    await handleDelete(selectedCouponId);
+                  }
+                  setOpenDeleteDialog(false);
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
