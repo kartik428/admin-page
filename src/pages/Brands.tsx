@@ -106,7 +106,7 @@ export default function Brands() {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/brands`);
+      const res = await axios.get(`https://ecombackend-mbpg.onrender.com/api/brands`);
       setBrands(res.data.data);
       setTotal(res.data.total || res.data.data.length);
       console.log(res.data.data);
