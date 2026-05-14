@@ -279,7 +279,7 @@ export default function Category() {
                         <img
                           src={
                             item.image
-                              ? `http://localhost:5000/${item.image}`
+                              ? `https://beritrave.tech/${item.image}`
                               : "https://via.placeholder.com/50"
                           }
                           className="w-12 h-12 rounded-md"

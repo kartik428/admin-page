@@ -205,7 +205,7 @@ export default function Brands() {
 
                     <TableCell>
                       <img
-                        src={brand.banner ? `http://localhost:5000/${brand.banner}` : "/placeholder.png"}
+                        src={brand.banner ? `https://beritrave.tech/${brand.banner}` : "/placeholder.png"}
                         className="w-14 h-14 object-cover rounded-md"
                       />
                     </TableCell>

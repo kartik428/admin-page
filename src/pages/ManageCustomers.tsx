@@ -61,11 +61,11 @@ export default function ManageCustomers() {
   const fetchData = async () => {
     try {
       const usersRes = await axios.get<{ data: UserType[] }>(
-        "http://localhost:5000/auth"
+        "https://beritrave.tech/auth"
       );
 
       const statsRes = await axios.get<any[]>(
-        "http://localhost:5000/auth/user-stats"
+        "https://beritrave.tech/auth/user-stats"
       );
 
       const usersData = usersRes.data.data;
@@ -95,7 +95,7 @@ export default function ManageCustomers() {
         return alert("All fields required");
       }
 
-      await axios.post("http://localhost:5000/auth", form);
+      await axios.post("https://beritrave.tech/auth", form);
 
       alert("Customer Added ✅");
 
@@ -124,7 +124,8 @@ export default function ManageCustomers() {
       const confirmDelete = window.confirm("Delete this user?");
       if (!confirmDelete) return;
 
-      await axios.delete(`http://localhost:5000/auth/${id}`);
+      // await axios.delete(`https://beritrave.tech/auth/${id}`);
+      await axios.delete(`https://beritrave.tech/auth/${id}`);
 
       setUsers((prev) => prev.filter((u) => u._id !== id));
     } catch (error) {

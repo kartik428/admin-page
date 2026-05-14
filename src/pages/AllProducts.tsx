@@ -117,7 +117,7 @@ export default function AllProducts() {
                                     {/* IMAGE */}
                                     <TableCell>
                                         <img
-                                            src={`http://localhost:5000/${item.image}`}
+                                            src={`https://beritrave.tech/${item.image}`}
                                             className="w-16 h-16 object-cover rounded-md"
                                         />
                                     </TableCell>
